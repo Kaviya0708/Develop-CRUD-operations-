@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRUD Operations</title>
+<style>
+    body{
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    input, button{
+        padding: 10px;
+        margin: 5px;
+    }
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td{
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+    th{
+        background-color: #f4f4f4;
+    }
+</style>
+</head>
+<body>
+
+<h2>CRUD Operations Demo</h2>
+
+<input type="text" id="name" placeholder="Enter Name">
+<input type="email" id="email" placeholder="Enter Email">
+<button onclick="saveUser()">Save</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+</table>
+
+<script>
+let users = [];
+let currentId = 1;
+let editId = null;
+
+function saveUser() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+
+    if(name === "" || email === "") {
+        alert("Please fill all fields");
+        return;
+    }
+
+    if(editId === null) {
+        users.push({
+            id: currentId++,
+            name,
+            email
+        });
+    } else {
+        const user = users.find(u => u.id === editId);
+        user.name = name;
+        user.email = email;
+        editId = null;
+    }
+
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+
+    displayUsers();
+}
+
+function displayUsers() {
+    let output = "";
+
+    users.forEach(user => {
+        output += `
+        <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>
+                <button onclick="editUser(${user.id})">Edit</button>
+                <button onclick="deleteUser(${user.id})">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("userTable").innerHTML = output;
+}
+
+function editUser(id) {
+    const user = users.find(u => u.id === id);
+
+    document.getElementById("name").value = user.name;
+    document.getElementById("email").value = user.email;
+
+    editId = id;
+}
+
+function deleteUser(id) {
+    users = users.filter(user => user.id !== id);
+    displayUsers();
+}
+</script>
+
+</body>
+</html>
